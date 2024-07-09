@@ -1,0 +1,9 @@
+.west/
+bootloader/
+build*/
+modules/
+tools/
+.vscode/
+*.bin
+*.zip
+**/__pycache__/*

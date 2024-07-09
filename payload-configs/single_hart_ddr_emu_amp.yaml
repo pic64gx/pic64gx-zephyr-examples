@@ -1,0 +1,19 @@
+#
+# HSS Payload Generator - Configuration file
+# Running an  Zephyr application from DDR, executing on U54_1
+#
+
+set-name: 'Zephyr-U54_4-pseudo-AMP'
+
+hart-entry-points: {
+  u54_4: '0x91C00000',
+}
+
+payloads:
+  build/zephyr/zephyr.elf:    {
+    exec-addr: '0x91C00000',
+    owner-hart: u54_4,
+    priv-mode: prv_m,
+    skip-opensbi: true,
+    payload-name: "zephyr"
+}

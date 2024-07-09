@@ -1,0 +1,12 @@
+sample:
+  description: This app provides an example of how to integrate OpenAMP
+    with Zephyr including a resource table.
+  name: OpenAMP with resource table example integration
+tests:
+  sample.subsys.ipc.openamp_rs_table:
+    build_only: true
+    platform_allow:
+      - pic64gx_curiosity_kit
+    integration_platforms:
+      - pic64gx_curiosity_kit
+

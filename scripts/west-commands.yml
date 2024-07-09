@@ -1,0 +1,15 @@
+west-commands:
+  - file: scripts/generate_payload.py
+    commands:
+      - name: generate-payload
+        class: GeneratePayload
+        help: |
+          invoke the Hart Software Services (HSS) payload generator
+          to generate a payload suitable for flashing to the boards eMMC
+  - file: scripts/flash_payload.py
+    commands:
+      - name: flash-payload
+        class: FlashPayload
+        help: |
+          flash a payload onto the boards eMMC.
+

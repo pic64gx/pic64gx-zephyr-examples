@@ -1,0 +1,22 @@
+/ {
+	cpus {
+		cpu@0 {
+			status = "disabled";
+		};
+	};
+
+	chosen {
+		zephyr,console = &uart1;
+		zephyr,shell-uart = &uart1;
+	};
+};
+
+&uart1 {
+	status = "disable";
+};
+
+&uart1 {
+	status = "okay";
+	current-speed = <115200>;
+	clock-frequency = <150000000>;
+};

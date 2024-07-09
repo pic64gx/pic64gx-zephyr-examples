@@ -1,0 +1,19 @@
+#
+# HSS Payload Generator - Configuration file
+# Running an  Zephyr application from Scratchpad, executing on U54_1
+#
+
+set-name: 'Zephyr-U54_1-Scratchpad'
+
+hart-entry-points: {
+  u54_1: '0xA080000',
+}
+
+payloads:
+  build/zephyr/zephyr.elf:    {
+    exec-addr: '0xA080000',
+    owner-hart: u54_1,
+    priv-mode: prv_m,
+    skip-opensbi: true,
+    payload-name: "zephyr"
+}

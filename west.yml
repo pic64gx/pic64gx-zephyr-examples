@@ -1,0 +1,26 @@
+# Copyright (c) 2024 Microchip Technologies
+# SPDX-License-Identifier: Apache-2.0
+
+manifest:
+  self:
+    west-commands: scripts/west-commands.yml
+
+  remotes:
+    - name: pic64gx-zephyrproject-rtos
+      url-base: ssh://git@github.com/pic64gx
+
+  projects:
+    - name: pic64gx-zephyr
+      remote: pic64gx-zephyrproject-rtos
+      revision: pic64gx
+      path: zephyr
+      import:
+        name-allowlist:
+          - hal_microchip
+    - name: pic64gx-rpmsg-lite
+      remote: pic64gx-zephyrproject-rtos
+      path: modules/lib/rpmsg-lite
+      revision: 69010a78da75c7ae9e9bdfa510ce862f47b29dad
+      #  path-blocklist:
+      #  - name: modules/hal/*
+      #  - name: tools/*

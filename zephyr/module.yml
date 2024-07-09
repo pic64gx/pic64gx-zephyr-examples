@@ -1,0 +1,11 @@
+# Copyright (c) 2024 Microchip Technologies
+# SPDX-License-Identifier: Apache-2.0
+
+blobs:
+  - path: payload-generator/hss-payload-generator.zip
+    sha256: 6e693330d94c3e11456efec3935774af1c46db23869e4c89c5d2d28b736fdcc2
+    type: img
+    version: '1.2.0'
+    license-path: ""
+    url: https://github.com/polarfire-soc/hart-software-services/releases/download/v2023.09/hss-payload-generator.zip
+    description: "hss payload generator"

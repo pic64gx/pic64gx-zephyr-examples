@@ -1,0 +1,53 @@
+
+/ {
+	cpus {
+		cpu@0 {
+			status = "disabled";
+		};
+		cpu@1 {
+			status = "disabled";
+		};
+		cpu@2 {
+			status = "disabled";
+		};
+		cpu@3 {
+			status = "disabled";
+		};
+	};
+
+	sram2: memory@91c00000 {
+		compatible = "mmio-sram";
+		device_type = "memory";
+		reg = < 0x91c00000 0x100000 >;
+	};
+
+	scratchpad: memory@A000000 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		device_type = "memory";
+		reg = <0xA000000 0x40000>;
+		zephyr,memory-region = "SCRATCHPAD";
+	};
+
+	chosen {
+		zephyr,console = &uart2;
+		zephyr,shell-uart = &uart2;
+		/* relocate zephyr to new context */
+		zephyr,sram = &sram2;
+	};
+
+	ihc: mailbox {
+		interrupt-parent = <&plic>;
+		interrupts = <181 2>, <180 2>, <179 2>, <178 2>, <177 2>;
+		interrupt-names = "hart_0_int", "hart_1_int", "hart_2_int", "hart_3_int", "hart_4_int";
+	};
+};
+
+&uart1 {
+	status = "disabled";
+};
+
+&uart2 {
+	status = "okay";
+	current-speed = <115200>;
+	clock-frequency = <150000000>;
+};
