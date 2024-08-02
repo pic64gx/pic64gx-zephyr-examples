@@ -28,7 +28,7 @@
 #endif
 
 typedef void (*func_t)(void);
-extern const uint64_t __SCRATCHPAD_start;
+extern const uintptr_t __SCRATCHPAD_start;
 
 enum miv_rp_mbox_messages {
     MIV_RP_MBOX_READY = 0xFFFFFF00,
@@ -87,6 +87,7 @@ void rproc_stop(uint32_t channel)
     }
 
     // use that trick to call the function in the scratchpad with -mo-pie activated
-    __asm__ volatile ("jalr ra, 0(%0)\n\t"
-    :: "r" (__SCRATCHPAD_start):"ra");
+    __asm__ volatile (
+        "jalr ra, 0(%0)\n\t"
+    :: "r" (&__SCRATCHPAD_start):"ra");
 }
