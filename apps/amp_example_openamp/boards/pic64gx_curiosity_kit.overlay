@@ -1,0 +1,79 @@
+/*
+ * Copyright (c) 2019 Linaro Limited
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+
+/ {
+	chosen {
+		/*
+		 * shared memory reserved for the inter-processor communication
+		 */
+
+		zephyr,sram = &sram2;
+		zephyr,ipc_shm = &vdev0buffer;
+		zephyr,ipc = &ihcc_h4_h1;
+		zephyr,console = &uart2;
+		zephyr,shell-uart = &uart2;
+		zephyr,rsctable-mem = &rsctable;
+	};
+
+	cpus {
+		cpu@0 {
+			status = "disabled";
+		};
+		cpu@1 {
+			status = "disabled";
+		};
+		cpu@2 {
+			status = "disabled";
+		};
+		cpu@3 {
+			status = "disabled";
+		};
+		cpu@4 {
+			status = "okay";
+		};
+	};
+
+	sram2: memory@91c00000 {
+		compatible = "mmio-sram";
+		device_type = "memory";
+		reg = < 0x91c00000 0x100000 >;
+	};
+
+	vdev0buffer: vdev0buff@91d10000 {
+		compatible = "mmio-sram";
+		device_type = "memory";
+		reg = <0x91d10000 0x40000>;
+	};
+
+	rsctable: rsc-table@91d50000 {
+		compatible = "zephyr,memory-region", "mmio-sram";
+		device_type = "memory";
+		reg = <0x91d50000 0x1000>;
+		zephyr,memory-region = "RSCTABLE";
+	};
+};
+
+&ihc {
+	status = "okay";
+};
+
+&ihcm_h4 {
+	status = "okay";
+};
+
+&ihcc_h4_h1 {
+	status = "okay";
+};
+
+&uart1 {
+	status = "disabled";
+};
+
+&uart2 {
+	status = "okay";
+	current-speed = <115200>;
+	clock-frequency = <150000000>;
+};
