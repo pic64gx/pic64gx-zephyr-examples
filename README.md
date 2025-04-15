@@ -3,8 +3,7 @@
 This repository provides Microchip PIC64GX SoC support for the Zephyr RTOS project with:
 
 - Sample Zephyr applications for Microchip's PIC64GX SoC
-- Extended `West` Commands to generate and flash a payload to the eMMC
-
+- Extended `West` Commands to generate payload for SD card compatible with HSS bootloader
 ## Prerequisites
 
 This section describes the requirements needed before building and flashing
@@ -62,7 +61,8 @@ The table below lists the applications available for PIC64GX Curiosity Kit that 
 
 | `application` |
 | --- |
-| `apps/amp_exemple` |
+| `apps/amp_example` |
+| `apps/amp_example_openamp` |
 | `apps/blinky` |
 | `apps/button` |
 
@@ -122,7 +122,94 @@ west build -p -b pic64gx_curiosity_kit pic64gx-soc/apps/blinky
 west generate-payload pic64gx-soc/payload-configs/single_hart_ddr.yaml output.bin
 ```
 
-The instructions above generate a payload called `output.bin`
+## Flashing a payload
+
+Once the payload is generated the easiest way to flash is to use,
+assuming sdcard is on /dev/sda
+```
+sudo dd if=output.bin of=/dev/sda
+```
+to check your sdcard directory (before after/after pluging the card)
+```
+lsblk
+```
+Warning:
+PLease be extremely careful about the dd command, you can wipe your entire system disk with it, please double check sdcard location
+
+## debugging
+
+### 1st terminal
+In one terminal or in background, run openocd
+Download and untar the PIC64GX OpenOCD release from https://github.com/microchip-fpga/openocd/releases/tag/v0.12.0-mchp.0.0.1
+
+```
+cd xpack-openocd-0.12.0-3
+./bin/openocd --command "set DEVICE pic64gx" -f board/microchip_riscv_efp5.cfg
+```
+
+In case PATH have been updated (ex: $HOME/.local/xPacks/openocd/xpack-openocd-0.12.0-3/bin)
+```
+openocd --command "set DEVICE pic64gx" -f board/microchip_riscv_efp5.cfg
+```
+
+### 2nd terminal
+In a second terminal, run gdb, also available with xPacks
+(ie: https://xpack-dev-tools.github.io/riscv-none-elf-gcc-xpack/)
+Or using the zephyr sdk toolchain
+(ex: $HOME/.local/opt/zephyr-sdk-0.16.5-1/riscv64-zephyr-elf/bin/riscv64-zephyr-elf-gdb 
+The patch depends on the install location)
+
+```
+riscv-none-elf-gdb
+```
+In GDB
+```
+target extended-remote localhost:3333
+```
+
+ex:
+```
+phm@ph-emdalo:~/.local/xPacks/@xpack-dev-tools/riscv-none-elf-gcc/13.2.0-2.1/.content/bin$ riscv-none-elf-gdb
+GNU gdb (xPack GNU RISC-V Embedded GCC x86_64) 13.2
+Copyright (C) 2023 Free Software Foundation, Inc.
+License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.html>
+This is free software: you are free to change and redistribute it.
+There is NO WARRANTY, to the extent permitted by law.
+Type "show copying" and "show warranty" for details.
+This GDB was configured as "--host=x86_64-pc-linux-gnu --target=riscv-none-elf".
+Type "show configuration" for configuration details.
+For bug reporting instructions, please see:
+<https://www.gnu.org/software/gdb/bugs/>.
+Find the GDB manual and other documentation resources online at:
+    <http://www.gnu.org/software/gdb/documentation/>.
+
+For help, type "help".
+Type "apropos word" to search for commands related to "word".
+(gdb) target remote localhost:3333
+Remote debugging using localhost:3333
+warning: No executable has been specified and target does not support
+determining executable automatically.  Try using the "file" command.
+warning: multi-threaded target stopped without sending a thread-id, using first non-exited thread
+0x000000000a003e3e in ?? ()
+(gdb) thread 5
+[Switching to thread 5 (Thread 5)]
+#0  0x0000000091c025a8 in ?? ()
+(gdb) symbol-file /home/phm/Projects/Microchip/zephyr/zephyr_pic64gx/build/openamp_linux/zephyr/zephyr_openamp_rsc_table.elf
+Reading symbols from /home/phm/Projects/Microchip/zephyr/zephyr_pic64gx/build/openamp_linux/zephyr/zephyr_openamp_rsc_table.elf...
+(gdb) bt
+#0  0x0000000091c025a8 in arch_cpu_idle ()
+    at /home/phm/Projects/Microchip/zephyr/zephyr_pic64gx/zephyr/arch/riscv/core/cpu_idle.c:15
+#1  0x0000000091c0631e in k_cpu_idle ()
+    at /home/phm/Projects/Microchip/zephyr/zephyr_pic64gx/zephyr/include/zephyr/kernel.h:5849
+#2  idle (unused1=unused1@entry=0x91c09ea0 <_kernel>, unused2=unused2@entry=0x0, unused3=unused3@entry=0x0)
+    at /home/phm/Projects/Microchip/zephyr/zephyr_pic64gx/zephyr/kernel/idle.c:89
+#3  0x0000000091c017e2 in z_thread_entry (entry=0x91c06312 <idle>, p1=0x91c09ea0 <_kernel>, p2=0x0, p3=0x0)
+    at /home/phm/Projects/Microchip/zephyr/zephyr_pic64gx/zephyr/lib/os/thread_entry.c:48
+#4  0xaaaaaaaaaaaaaaaa in ?? ()
+Backtrace stopped: frame did not save the PC
+(gdb)
+```
+Note: The current example is a amp_example running on hart 5 (u54_4)
 
 ## Additional Reading
 
