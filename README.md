@@ -156,7 +156,7 @@ openocd --command "set DEVICE pic64gx" -f board/microchip_riscv_efp5.cfg
 In a second terminal, run gdb, also available with xPacks
 (ie: https://xpack-dev-tools.github.io/riscv-none-elf-gcc-xpack/)
 Or using the zephyr sdk toolchain
-(ex: $HOME/.local/opt/zephyr-sdk-0.16.5-1/riscv64-zephyr-elf/bin/riscv64-zephyr-elf-gdb 
+(ex: $HOME/.local/opt/zephyr-sdk-0.16.5-1/riscv64-zephyr-elf/bin/riscv64-zephyr-elf-gdb
 The patch depends on the install location)
 
 ```
@@ -210,6 +210,38 @@ Backtrace stopped: frame did not save the PC
 (gdb)
 ```
 Note: The current example is a amp_example running on hart 5 (u54_4)
+
+## UART
+### On linux
+You might need to add specific udev rules to be able to use the pic64gx-curiosity-kit embedded JTAG/UART
+Create /etc/udev/rules.d/70-microchip.rules :
+```
+# Update right for flashpro 6
+ACTION=="add", ATTRS{idVendor}=="1514", ATTRS{idProduct}=="200b", \
+GROUP="dialout" MODE="0666"
+
+# Bind ftdi_sio driver to all input
+ACTION=="add", ATTRS{idVendor}=="1514", ATTRS{idProduct}=="2008", \
+ATTRS{product}=="Embedded FlashPro5", ATTR{bInterfaceNumber}!="00", \
+RUN+="/sbin/modprobe ftdi_sio", RUN+="/bin/sh -c 'echo 1514 2008 > /sys/bus/usb-serial/drivers/ftdi_sio/new_id'"
+
+# Unbind ftdi_sio driver for channel A which should be the JTAG
+SUBSYSTEM=="usb", DRIVER=="ftdi_sio", ATTR{bInterfaceNumber}=="00", ATTR{interface}=="Embedded FlashPro5",\
+RUN+="/bin/sh -c 'echo $kernel > /sys/bus/usb/drivers/ftdi_sio/unbind'"
+
+# Helper (optional)
+KERNEL=="ttyUSB[0-9]*", SUBSYSTEM=="tty", SUBSYSTEMS=="usb", \
+ATTRS{interface}=="Embedded FlashPro5", ATTRS{bInterfaceNumber}=="01", \
+SYMLINK+="ttyUSB-FlashPro5B" GROUP="dialout" MODE="0666"
+
+KERNEL=="ttyUSB[0-9]*", SUBSYSTEM=="tty", SUBSYSTEMS=="usb", \
+ATTRS{interface}=="Embedded FlashPro5", ATTRS{bInterfaceNumber}=="02", \
+SYMLINK+="ttyUSB-FlashPro5C" GROUP="dialout" MODE="0666"
+
+KERNEL=="ttyUSB[0-9]*", SUBSYSTEM=="tty", SUBSYSTEMS=="usb", \
+ATTRS{interface}=="Embedded FlashPro5", ATTRS{bInterfaceNumber}=="03", \
+SYMLINK+="ttyUSB-FlashPro5D" GROUP="dialout" MODE="0666"
+```
 
 ## Additional Reading
 
