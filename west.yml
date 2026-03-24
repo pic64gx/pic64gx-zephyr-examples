@@ -12,17 +12,10 @@ manifest:
   projects:
     - name: pic64gx-zephyr
       remote: pic64gx-zephyrproject-rtos
-      revision: d5777557c54cec9cd4b3db66e3ff413987eee393
+      revision: 799c3f61f89e5602212b5cfc7de5f5e630de90f1
       path: zephyr
       import:
         name-allowlist:
           - hal_microchip
           - open-amp
           - libmetal
-    - name: pic64gx-rpmsg-lite
-      remote: pic64gx-zephyrproject-rtos
-      path: modules/lib/rpmsg-lite
-      revision: 63229af4a7bd50003968062b4328163c66bf1097
-      #  path-blocklist:
-      #  - name: modules/hal/*
-      #  - name: tools/*
