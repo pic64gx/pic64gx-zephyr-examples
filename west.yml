@@ -12,7 +12,7 @@ manifest:
   projects:
     - name: pic64gx-zephyr
       remote: pic64gx-zephyrproject-rtos
-      revision: 799c3f61f89e5602212b5cfc7de5f5e630de90f1
+      revision: 4f46662ffb014fe30b74ac7c25a2d2ede7894b33
       path: zephyr
       import:
         name-allowlist:
